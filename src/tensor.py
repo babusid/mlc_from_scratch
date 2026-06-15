@@ -339,23 +339,140 @@ class Div(TensorOp):
 
 
 class Matmul(TensorOp):
-    pass
+    @override
+    def __call__(
+        self,
+        inputs: list[Tensor],
+        const_inputs: list[float | int] | None = None,
+        label: str | None = None,
+    ) -> Tensor:
+        assert len(inputs) == 2, "Matmul op requires exactly 2 input tensors"
+        assert const_inputs is None or len(const_inputs) == 0, (
+            "Matmul op does not accept constant inputs"
+        )
+
+        return Tensor(inputs=inputs, op=self, label=label)
+
+    @override
+    def compute(
+        self, inputs: list[np.ndarray], const_inputs: list[float | int] | None = None
+    ) -> list[np.ndarray]:
+        assert(len(inputs) == 2), "Matmul op requires exactly 2 input tensors"
+        assert const_inputs is None or len(const_inputs) == 0, (
+            "Matmul op does not accept constant inputs"
+        )
+        return [inputs[0] @ inputs[1]]
+
+
+    @override
+    def gradients(self, tensor: Tensor, incoming_grad: Tensor) -> list[Tensor]:
+        # dL/dA = dL/dC * dC/dA = incoming_grad * B^T
+        # dL/dB = dL/dC * dC/dB = A^T * incoming_grad
+        return [incoming_grad @ tensor.inputs[1].T, tensor.inputs[0].T @ incoming_grad]
+
+    @override
+    def emit_ir(self, inputs: list[str]) -> str:
+        return ""
 
 
 class ZerosLike(TensorOp):
-    pass
+    @override
+    def __call__(
+        self,
+        inputs: list[Tensor],
+        const_inputs: list[float | int] | None = None,
+        label: str | None = None,
+    ) -> Tensor:
+        pass
+
+    @override
+    def compute(
+        self, inputs: list[np.ndarray], const_inputs: list[float | int] | None = None
+    ) -> list[np.ndarray]:
+        pass
+
+    @override
+    def gradients(self, tensor: Tensor, incoming_grad: Tensor) -> list[Tensor]:
+        pass
+
+    @override
+    def emit_ir(self, inputs: list[str]) -> str:
+        return ""
 
 
 class OnesLike(TensorOp):
-    pass
+    @override
+    def __call__(
+        self,
+        inputs: list[Tensor],
+        const_inputs: list[float | int] | None = None,
+        label: str | None = None,
+    ) -> Tensor:
+        pass
+
+    @override
+    def compute(
+        self, inputs: list[np.ndarray], const_inputs: list[float | int] | None = None
+    ) -> list[np.ndarray]:
+        pass
+
+    @override
+    def gradients(self, tensor: Tensor, incoming_grad: Tensor) -> list[Tensor]:
+        pass
+
+    @override
+    def emit_ir(self, inputs: list[str]) -> str:
+        return ""
 
 
 class Reshape(TensorOp):
-    pass
+    @override
+    def __call__(
+        self,
+        inputs: list[Tensor],
+        const_inputs: list[float | int] | None = None,
+        label: str | None = None,
+    ) -> Tensor:
+        pass
+
+    @override
+    def compute(
+        self, inputs: list[np.ndarray], const_inputs: list[float | int] | None = None
+    ) -> list[np.ndarray]:
+        pass
+
+    @override
+    def gradients(self, tensor: Tensor, incoming_grad: Tensor) -> list[Tensor]:
+        pass
+
+    @override
+    def emit_ir(self, inputs: list[str]) -> str:
+        return ""
 
 
 class BroadcastTo(TensorOp):
-    pass
+    @override
+    def __call__(
+        self,
+        inputs: list[Tensor],
+        const_inputs: list[float | int] | None = None,
+        label: str | None = None,
+    ) -> Tensor:
+        pass
+
+    @override
+    def compute(
+        self, inputs: list[np.ndarray], const_inputs: list[float | int] | None = None
+    ) -> list[np.ndarray]:
+        pass
+
+    @override
+    def gradients(self, tensor: Tensor, incoming_grad: Tensor) -> list[Tensor]:
+        pass
+
+    @override
+    def emit_ir(self, inputs: list[str]) -> str:
+        return ""
 
 
 # Singleton factory instances of tensor operations.
