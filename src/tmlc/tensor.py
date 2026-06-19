@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
 from numpy import ndarray
 from typing_extensions import override
-from tmlc.ops.ops_arithmetic import add, div, mm, mul, negate, power
-from tmlc.ops.ops_basic import constant
-from tmlc.ops.ops_shape import transpose
 
 
 class Tensor:
@@ -44,60 +41,91 @@ class Tensor:
 
     @override
     def __str__(self):
-        return f"Tensor(op={self.label}, inputs={[str(i) for i in self.inputs]})"
+        inputs = ", ".join(str(tensor) for tensor in self.inputs)
+        return f"Tensor(op={self.label}, inputs=[{inputs}])"
 
     @override
     def __repr__(self):
         return self.__str__()
 
     def __add__(self, other: "Tensor|float|int") -> "Tensor":
+        from tmlc.ops.ops_arithmetic import add
+        from tmlc.ops.ops_basic import constant
+
         if isinstance(other, (int, float)):
             other = constant(other, label=str(other))
         return add(self, other)
 
     def __radd__(self, other: "Tensor|float|int") -> "Tensor":
+        from tmlc.ops.ops_arithmetic import add
+        from tmlc.ops.ops_basic import constant
+
         if isinstance(other, (int, float)):
             other = constant(other, label=str(other))
         return add(self, other)
 
     def __mul__(self, other: "Tensor|float|int") -> "Tensor":
+        from tmlc.ops.ops_arithmetic import mul
+        from tmlc.ops.ops_basic import constant
+
         if isinstance(other, (int, float)):
             other = constant(other, label=str(other))
         return mul(self, other)
 
     def __rmul__(self, other: "Tensor|float|int") -> "Tensor":
+        from tmlc.ops.ops_arithmetic import mul
+        from tmlc.ops.ops_basic import constant
+
         if isinstance(other, (int, float)):
             other = constant(other, label=str(other))
         return mul(self, other)
 
     def __truediv__(self, other: "Tensor|float|int") -> "Tensor":
+        from tmlc.ops.ops_arithmetic import div
+        from tmlc.ops.ops_basic import constant
+
         if isinstance(other, (int, float)):
             other = constant(1 / other, label=str(1 / other))
         return div(self, other)
 
     def __sub__(self, other: "Tensor|float|int") -> "Tensor":
+        from tmlc.ops.ops_arithmetic import add, negate
+        from tmlc.ops.ops_basic import constant
+
         if isinstance(other, (int, float)):
             other = constant(other, label=str(other))
         return add(self, negate(other))
 
     def __rsub__(self, other: "Tensor|float|int") -> "Tensor":
+        from tmlc.ops.ops_arithmetic import add, negate
+        from tmlc.ops.ops_basic import constant
+
         if isinstance(other, (int, float)):
             other = constant(other, label=str(other))
         return add(other, negate(self))
 
     def __neg__(self) -> "Tensor":
+        from tmlc.ops.ops_arithmetic import negate
+
         return negate(self)
 
     def __pow__(self, other: "Tensor|float|int") -> "Tensor":
+        from tmlc.ops.ops_arithmetic import power
+        from tmlc.ops.ops_basic import constant
+
         if isinstance(other, (int, float)):
             other = constant(other, label=str(other))
         return power(self, other)
 
     def __matmul__(self, other: "Tensor") -> "Tensor":
+        from tmlc.ops.ops_arithmetic import mm
+
         return mm(self, other)
 
     @property
     def T(self) -> "Tensor":
+        from tmlc.ops.ops_shape import transpose
+
         return transpose(self)
 
 
