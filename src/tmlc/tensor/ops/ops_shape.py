@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import numpy as np
 from numpy import ndarray
 from typing_extensions import override
 
-from tmlc.tensor import Tensor, TensorOp
+from tmlc.tensor.tensor import Tensor, TensorOp
 
 
 def _normalize_axes(

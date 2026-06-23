@@ -1,7 +1,11 @@
+from __future__ import annotations
+
 import numpy as np
 from numpy import ndarray
 from typing_extensions import override
-from tmlc.tensor import Tensor, TensorOp
+from tmlc.tensor.tensor import Tensor, TensorOp
+from tmlc.tensor.ops.ops_shape import broadcast_to
+from tmlc.tensor.ops.ops_logarithmic import log
 
 
 def _broadcast_shape(shape1: tuple[int, ...], shape2: tuple[int, ...]) -> tuple[int, ...]:
@@ -17,8 +21,6 @@ def _broadcast_shape(shape1: tuple[int, ...], shape2: tuple[int, ...]) -> tuple[
 
 
 def _broadcast_pair(t1: Tensor, t2: Tensor) -> tuple[Tensor, Tensor]:
-    from tmlc.ops.ops_shape import broadcast_to
-
     shape = _broadcast_shape(shape1=t1.shape, shape2=t2.shape)
     if t1.shape != shape:
         t1 = broadcast_to(t1, shape=shape)
@@ -238,8 +240,6 @@ class Pow(TensorOp):
 
     @override
     def gradients(self, tensor: Tensor, incoming_grad: Tensor) -> list[Tensor]:
-        from tmlc.ops.ops_logarithmic import log
-
         lhs, rhs = tensor.inputs
         return [
             incoming_grad * rhs * power(lhs, rhs - 1),

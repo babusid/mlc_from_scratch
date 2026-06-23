@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import numpy as np
 from numpy import ndarray
 from typing_extensions import override
 
-from tmlc.tensor import Tensor, TensorOp
+from tmlc.tensor.tensor import Tensor, TensorOp
+from tmlc.tensor.ops.ops_shape import _normalize_axes, broadcast_to, reshape
 
 
 class Exp(TensorOp):
@@ -127,8 +130,6 @@ class LogSumExp(TensorOp):
 
     @override
     def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
-        from tmlc.ops.ops_shape import _normalize_axes
-
         assert len(inputs) == 1, "LogSumExp op requires exactly 1 input tensor"
         axes = _normalize_axes(axes=self.axes, shape=inputs[0].shape)
         if axes is None:
@@ -145,8 +146,6 @@ class LogSumExp(TensorOp):
 
     @override
     def gradients(self, tensor: Tensor, incoming_grad: Tensor) -> list[Tensor]:
-        from tmlc.ops.ops_shape import _normalize_axes, broadcast_to, reshape
-
         input_tensor = tensor.inputs[0]
         axes = _normalize_axes(axes=self.axes, shape=input_tensor.shape)
         if axes is None:

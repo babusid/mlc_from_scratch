@@ -1,4 +1,6 @@
-from tmlc.tensor import Tensor
+from __future__ import annotations
+
+from tmlc.tensor.tensor import Tensor
 
 def dfs_helper_topo_sort(node: Tensor, visited: set[Tensor], topo_sort: list[Tensor]) -> None:
     """Helper function for topological sort using post-order DFS traversal.

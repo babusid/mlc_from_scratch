@@ -1,13 +1,39 @@
+from __future__ import annotations
+
 from beartype.claw import beartype_this_package
 beartype_this_package()  # must precede submodule imports below to hook them
 
 from .ndarray import ndarray
-from .tensor import ConstantTensor, Tensor, TensorOp
-from . import _operators  # noqa: F401  (attaches Tensor's operator dunders, see tensor.py)
-from .ops.ops_basic import Constant, Input, constant, zeros, ones, input
-from .ops.ops_arithmetic import Add, Div, Matmul, Mul, Negate, Pow, add, div, mm, mul, negate, power
-from .ops.ops_logarithmic import Exp, Log, LogSumExp, Tanh, exp, log, logsumexp, tanh
-from .ops.ops_shape import (
+from .tensor import (
+    ConstantTensor,
+    Tensor,
+    TensorOp,
+    Constant,
+    Input,
+    constant,
+    zeros,
+    ones,
+    input,
+    Add,
+    Div,
+    Matmul,
+    Mul,
+    Negate,
+    Pow,
+    add,
+    div,
+    mm,
+    mul,
+    negate,
+    power,
+    Exp,
+    Log,
+    LogSumExp,
+    Tanh,
+    exp,
+    log,
+    logsumexp,
+    tanh,
     BroadcastTo,
     OnesLike,
     Reshape,
@@ -21,9 +47,7 @@ from .ops.ops_shape import (
     transpose,
     zeros_like,
 )
-from .evaluator import run
-from .graph.graph import Graph
-from .graph.transforms.differentiate import differentiate
+from .graph.graph import Graph, differentiate
 
 __all__ = [
     "ndarray",
@@ -31,7 +55,6 @@ __all__ = [
     "ConstantTensor",
     "TensorOp",
     "Graph",
-    "run",
     "differentiate",
     "constant",
     "zeros",

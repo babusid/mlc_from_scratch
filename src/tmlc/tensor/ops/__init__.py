@@ -1,4 +1,6 @@
-"""Tensor operation modules live under `tmlc.ops`."""
+"""Tensor operation modules live under `tmlc.tensor.ops`."""
+
+from __future__ import annotations
 
 from .ops_arithmetic import Add, Div, Matmul, Mul, Negate, Pow, add, div, mm, mul, negate, power
 from .ops_basic import Constant, Input, constant, input, ones, zeros

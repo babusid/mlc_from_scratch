@@ -5,10 +5,12 @@ module: it breaks the circular dependency between tensor.py and the ops modules.
 is imported once (for its side effect) from tmlc/__init__.py, before any Tensor is used.
 """
 
-from tmlc.tensor import Tensor
-from tmlc.ops.ops_arithmetic import add, div, mm, mul, negate, power
-from tmlc.ops.ops_basic import constant
-from tmlc.ops.ops_shape import transpose
+from __future__ import annotations
+
+from tmlc.tensor.tensor import Tensor
+from tmlc.tensor.ops.ops_arithmetic import add, div, mm, mul, negate, power
+from tmlc.tensor.ops.ops_basic import constant
+from tmlc.tensor.ops.ops_shape import transpose
 
 
 def ensure_tensor(other: Tensor | float | int) -> Tensor:

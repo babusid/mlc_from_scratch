@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from typing_extensions import override
 from abc import ABC, abstractmethod
 import numpy as np
 from tmlc.ndarray import ndarray
-from tmlc.tensor import ConstantTensor, Tensor, TensorOp
+from tmlc.tensor.tensor import ConstantTensor, Tensor, TensorOp
 
 
 class Constant(TensorOp):
