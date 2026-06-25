@@ -17,14 +17,14 @@ class Constant(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         assert inputs is None or len(inputs) == 0, "Constant op cannot accept any input tensors"
         return ConstantTensor(value=self.value, op=self, label=label)
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert inputs is None or len(inputs) == 0, "Constant op cannot accept any input tensors"
         return self.value.shape
 
@@ -57,19 +57,19 @@ class Input(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         assert inputs is None or len(inputs) == 0, "Input op cannot accept any input tensors"
         return Tensor(
-            inputs=[],
+            inputs=tuple(),
             op=self,
             shape=self.infer_shape(inputs=inputs),
             label=label,
         )
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert inputs is None or len(inputs) == 0, "Input op cannot accept any input tensors"
         return self.shape
 
@@ -95,7 +95,7 @@ def constant(value: float | int | ndarray, label: str | None = None) -> Tensor:
     This is used to denote constant values in the computational graph that are not supplied at
     evaluation time, but rather determined at graph construction time.
     """
-    return Constant(value)(inputs=[], label=label)
+    return Constant(value)(inputs=tuple(), label=label)
 
 
 def zeros(shape: tuple[int, ...], label: str | None = None) -> Tensor:
@@ -114,4 +114,4 @@ def input(shape: tuple[int, ...], label: str | None = None) -> Tensor:
     All input nodes must be assigned a
     value at evaluation time.
     """
-    return Input(shape=shape)(inputs=[], label=label)
+    return Input(shape=shape)(inputs=tuple(), label=label)

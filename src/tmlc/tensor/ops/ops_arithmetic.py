@@ -33,7 +33,7 @@ class Add(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         return Tensor(
@@ -44,7 +44,7 @@ class Add(TensorOp):
         )
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert len(inputs) == 2, "Add op requires exactly 2 input tensors"
         assert inputs[0].shape == inputs[1].shape, "Add op requires tensors to have the same shape"
         return inputs[0].shape
@@ -68,7 +68,7 @@ class Mul(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         return Tensor(
@@ -79,7 +79,7 @@ class Mul(TensorOp):
         )
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert len(inputs) == 2, "Mul op requires exactly 2 input tensors"
         assert inputs[0].shape == inputs[1].shape, "Mul op requires tensors to have the same shape"
         return inputs[0].shape
@@ -103,7 +103,7 @@ class Div(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         return Tensor(
@@ -114,7 +114,7 @@ class Div(TensorOp):
         )
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert len(inputs) == 2, "Div op requires exactly 2 input tensors"
         assert inputs[0].shape == inputs[1].shape, "Div op requires tensors to have the same shape"
         return inputs[0].shape
@@ -141,7 +141,7 @@ class Matmul(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         return Tensor(
@@ -152,7 +152,7 @@ class Matmul(TensorOp):
         )
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert len(inputs) == 2, "Matmul op requires exactly 2 input tensors"
         assert len(inputs[0].shape) == 2 and len(inputs[1].shape) == 2, (
             "Matmul op requires 2D input tensors"
@@ -179,7 +179,7 @@ class Negate(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         return Tensor(
@@ -190,7 +190,7 @@ class Negate(TensorOp):
         )
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert len(inputs) == 1, "Negate op requires exactly 1 input tensor"
         return inputs[0].shape
 
@@ -212,7 +212,7 @@ class Pow(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         return Tensor(
@@ -223,7 +223,7 @@ class Pow(TensorOp):
         )
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert len(inputs) == 2, "Power op requires exactly 2 input tensors"
         assert inputs[0].shape == inputs[1].shape, (
             "Power op requires tensors to have the same shape"
@@ -253,27 +253,27 @@ class Pow(TensorOp):
 
 def add(t1: Tensor, t2: Tensor, label: str | None = None) -> Tensor:
     t1, t2 = _broadcast_pair(t1=t1, t2=t2)
-    return Add()(inputs=[t1, t2], label=label)
+    return Add()(inputs=(t1, t2), label=label)
 
 
 def mul(t1: Tensor, t2: Tensor, label: str | None = None) -> Tensor:
     t1, t2 = _broadcast_pair(t1=t1, t2=t2)
-    return Mul()(inputs=[t1, t2], label=label)
+    return Mul()(inputs=(t1, t2), label=label)
 
 
 def div(t1: Tensor, t2: Tensor, label: str | None = None) -> Tensor:
     t1, t2 = _broadcast_pair(t1=t1, t2=t2)
-    return Div()(inputs=[t1, t2], label=label)
+    return Div()(inputs=(t1, t2), label=label)
 
 
 def mm(t1: Tensor, t2: Tensor, label: str | None = None) -> Tensor:
-    return Matmul()(inputs=[t1, t2], label=label)
+    return Matmul()(inputs=(t1, t2), label=label)
 
 
 def power(t1: Tensor, t2: Tensor, label: str | None = None) -> Tensor:
     t1, t2 = _broadcast_pair(t1=t1, t2=t2)
-    return Pow()(inputs=[t1, t2], label=label)
+    return Pow()(inputs=(t1, t2), label=label)
 
 
 def negate(t: Tensor, label: str | None = None) -> Tensor:
-    return Negate()(inputs=[t], label=label)
+    return Negate()(inputs=(t,), label=label)

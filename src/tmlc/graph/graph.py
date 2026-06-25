@@ -9,8 +9,9 @@ from tmlc.util.topo_sort import dfs_helper_topo_sort
 from tmlc.ndarray import ndarray
 from abc import ABC, abstractmethod
 
+
 class GraphTransform(ABC):
-    '''
+    """
     Base class for graph transformations. Subclasses must implement the __call__ method.
     We implement a class for GraphTransform rather than allowing a raw Callable in order to avoid
     variadic arguments in the __call__ method, which would make it difficult to type check the
@@ -18,10 +19,12 @@ class GraphTransform(ABC):
     each transform class that emit custom GraphTransform objects with the appropriate parameters,
     thereby allowing the actual __call__ signature to be uniform across all GraphTransform
     subclasses.
-    '''
+    """
+
     @abstractmethod
     def __call__(self, graph: Graph) -> Graph:
         raise NotImplementedError("GraphTransform subclasses must implement __call__")
+
 
 class Graph:
     """
@@ -33,6 +36,7 @@ class Graph:
     Immutable by design: `inputs`/`outputs`/`topo_sort` are read-only tuples. A GraphTransform
     must never mutate the graph it's given — it must build and return a new Graph instead.
     """
+
     _inputs: tuple[Tensor, ...]
     _outputs: tuple[Tensor, ...]
     _topo_sort: tuple[Tensor, ...]
@@ -53,6 +57,14 @@ class Graph:
     @property
     def topo_sort(self) -> tuple[Tensor, ...]:
         return self._topo_sort
+
+    @property
+    def input_set(self) -> set[Tensor]:
+        return set(self._inputs)
+
+    @property
+    def output_set(self) -> set[Tensor]:
+        return set(self._outputs)
 
     def _build_topo_sort(self) -> list[Tensor]:
         """Return a topological sort of the graph's nodes."""
@@ -91,6 +103,7 @@ class Graph:
     def run_compiled(self) -> None:
         return
 
+
 def differentiate(graph: Graph, output_node: Tensor, target_nodes: list[Tensor]) -> Graph:
     rev_topo_sort: list[Tensor] = []
     rev_topo_sort = [t for t in graph.topo_sort]
@@ -127,10 +140,5 @@ def differentiate(graph: Graph, output_node: Tensor, target_nodes: list[Tensor])
             # pass in the appropriate gradients
             node_grad_incoming[input].append(input_grad)
 
-    bwd_outputs = [
-        node_grad.get(target, zeros_like(target))
-        for target in target_nodes
-    ]
+    bwd_outputs = [node_grad.get(target, zeros_like(target)) for target in target_nodes]
     return Graph(graph.inputs, bwd_outputs)
-
-

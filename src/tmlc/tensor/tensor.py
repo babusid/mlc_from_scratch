@@ -20,7 +20,7 @@ class Tensor:
     the graph. The actual data is held in buffers that are supplied at evaluation time.
     """
 
-    inputs: list[Tensor]
+    inputs: tuple[Tensor,...]
     op: TensorOp
     label: str
     shape: tuple[int, ...]
@@ -28,7 +28,7 @@ class Tensor:
 
     def __init__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         op: TensorOp,
         shape: tuple[int, ...],
         label: str | None = None,
@@ -85,7 +85,7 @@ class ConstantTensor(Tensor):
     constval: ndarray
 
     def __init__(self, value: ndarray, op: TensorOp, label: str | None = None):
-        super().__init__(inputs=[], op=op, label=label, shape=value.shape)
+        super().__init__(inputs=tuple(), op=op, label=label, shape=value.shape)
         self.constval = value
 
 
@@ -95,7 +95,7 @@ class TensorOp(ABC):
     @abstractmethod
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor, ...],
         label: str | None = None,
     ) -> Tensor:
         """When a TensorOp is called, it should create a new Tensor that represents the output of
@@ -103,7 +103,7 @@ class TensorOp(ABC):
         raise NotImplementedError("TensorOp subclasses must implement __call__")
 
     @abstractmethod
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         """
         Given the input tensors (which contain their shapes), infer the shape of the
         output tensor that this operation will produce.

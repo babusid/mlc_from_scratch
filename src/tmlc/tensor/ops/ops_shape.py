@@ -56,7 +56,7 @@ class Transpose(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         return Tensor(
@@ -67,7 +67,7 @@ class Transpose(TensorOp):
         )
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert len(inputs) == 1, "Transpose op requires exactly 1 input tensor"
         permutation = self._permutation(shape=inputs[0].shape)
         return tuple(inputs[0].shape[axis] for axis in permutation)
@@ -97,7 +97,7 @@ class Summation(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         return Tensor(
@@ -108,7 +108,7 @@ class Summation(TensorOp):
         )
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert len(inputs) == 1, "Summation op requires exactly 1 input tensor"
         axes = normalize_axes(axes=self.axes, shape=inputs[0].shape)
         if axes is None:
@@ -157,12 +157,12 @@ class Fill(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         assert inputs is None or len(inputs) == 0, "Fill op cannot accept any input tensors"
         return Tensor(
-            inputs=[],
+            inputs=tuple(),
             op=self,
             shape=self.shape,
             dtype=self.dtype,
@@ -170,7 +170,7 @@ class Fill(TensorOp):
         )
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert inputs is None or len(inputs) == 0, "Fill op cannot accept any input tensors"
         return self.shape
 
@@ -197,7 +197,7 @@ class Reshape(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         return Tensor(
@@ -208,7 +208,7 @@ class Reshape(TensorOp):
         )
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert len(inputs) == 1, "Reshape op requires exactly 1 input tensor"
         assert np.prod(inputs[0].shape) == np.prod(self.shape), "Reshape cannot change tensor size"
         return self.shape
@@ -237,7 +237,7 @@ class BroadcastTo(TensorOp):
     @override
     def __call__(
         self,
-        inputs: list[Tensor],
+        inputs: tuple[Tensor,...],
         label: str | None = None,
     ) -> Tensor:
         return Tensor(
@@ -248,7 +248,7 @@ class BroadcastTo(TensorOp):
         )
 
     @override
-    def infer_shape(self, inputs: list[Tensor]) -> tuple[int, ...]:
+    def infer_shape(self, inputs: tuple[Tensor,...]) -> tuple[int, ...]:
         assert len(inputs) == 1, "BroadcastTo op requires exactly 1 input tensor"
         _assert_broadcastable(input_shape=inputs[0].shape, target_shape=self.shape)
         return self.shape
@@ -277,15 +277,15 @@ def transpose(
     axes: tuple[int, int] | None = None,
     label: str | None = None,
 ) -> Tensor:
-    return Transpose(axes=axes)(inputs=[t], label=label)
+    return Transpose(axes=axes)(inputs=(t,), label=label)
 
 
 def reshape(t: Tensor, shape: tuple[int, ...], label: str | None = None) -> Tensor:
-    return Reshape(shape=shape)(inputs=[t], label=label)
+    return Reshape(shape=shape)(inputs=(t,), label=label)
 
 
 def broadcast_to(t: Tensor, shape: tuple[int, ...], label: str | None = None) -> Tensor:
-    return BroadcastTo(shape=shape)(inputs=[t], label=label)
+    return BroadcastTo(shape=shape)(inputs=(t,), label=label)
 
 
 def summation(
@@ -293,12 +293,12 @@ def summation(
     axes: tuple[int, ...] | int | None = None,
     label: str | None = None,
 ) -> Tensor:
-    return Summation(axes=axes)(inputs=[t], label=label)
+    return Summation(axes=axes)(inputs=(t,), label=label)
 
 
 def zeros_like(t: Tensor, label: str | None = None) -> Tensor:
-    return Fill(shape=t.shape, value=0.0, dtype=t.dtype)(inputs=[], label=label)
+    return Fill(shape=t.shape, value=0.0, dtype=t.dtype)(inputs=tuple(), label=label)
 
 
 def ones_like(t: Tensor, label: str | None = None) -> Tensor:
-    return Fill(shape=t.shape, value=1.0, dtype=t.dtype)(inputs=[], label=label)
+    return Fill(shape=t.shape, value=1.0, dtype=t.dtype)(inputs=tuple(), label=label)
